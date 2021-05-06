@@ -17,6 +17,7 @@ public class Char : MonoBehaviour {
     private void Awake() {
         item = GameObject.FindWithTag("Item");
         agent = GetComponent<NavMeshAgent>();
+        Debug.Log(agent.path);
         animator = GetComponent<Animator>();
     }
 
@@ -37,8 +38,8 @@ public class Char : MonoBehaviour {
     }
 
     private bool reachedItem(){
-        bool x = item.transform.position.x == transform.position.x;
-        bool z = item.transform.position.z == transform.position.z;
+        bool x = transform.position.x - item.transform.position.x <= 0.5f;
+        bool z = transform.position.z - item.transform.position.z <= 0.5f;
         return x && z;
     }
 
@@ -79,13 +80,15 @@ public class Char : MonoBehaviour {
     }
 
     private void SearchWalkPoint(){
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
+        float randomX = Random.Range(-9f, 9f);
+        float randomZ = Random.Range(-7, 7);
 
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        walkPoint = new Vector3(randomX, transform.position.y, randomZ);
+        
+        bool isGrounded = Physics.Raycast(walkPoint, -transform.up, 2f, groundMask);
+        
 
-        if(Physics.Raycast(walkPoint, -transform.up, 2f, groundMask))
-            walkPointSet = true;
+        if(isGrounded) walkPointSet = true;
     }
 
 }
